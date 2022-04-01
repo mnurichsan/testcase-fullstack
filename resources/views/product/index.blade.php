@@ -11,6 +11,7 @@
                 <tr>
                     <td>#</td>
                     <td>Name</td>
+                    <td>Category</td>
                     <td>Price</td>
                     <td>Image</td>
                     <td>Description</td>
@@ -48,6 +49,9 @@
                         "data": "name"
                     },
                     {
+                        "data": "category"
+                    },
+                    {
                         "data": "price"
                     },
                     {
@@ -64,7 +68,7 @@
                 ],
                 "bAutoWidth": false,
                 "columnDefs": [{
-                    targets: [0, 1],
+                    targets: [0, 1,2,3,4,5,6],
                     className: 'text-center'
                 }],
                 "bDestroy": true,
