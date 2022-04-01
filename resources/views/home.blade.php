@@ -9,7 +9,7 @@
                   Dashboard
                 </a>
                 <a href="{{route('category.index')}}" class="list-group-item list-group-item-action @if(Route::is('category.index') || Route::is('category.create')  || Route::is('category.edit') ) active @endif">Category</a>
-                <a href="#" class="list-group-item list-group-item-action">Product</a>
+                <a href="{{route('product.index')}}" class="list-group-item list-group-item-action @if(Route::is('product.index') || Route::is('product.create')  || Route::is('product.edit') ) active @endif">Product</a>
               </div>
         </div>
         <div class="col-lg-10">

@@ -56,7 +56,7 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        return view('category.edit',compact('category','category'));
+        return view('category.edit',compact('category'));
     }
 
 
