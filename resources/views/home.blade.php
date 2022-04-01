@@ -1,8 +1,7 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-3">
         <div class="col-lg-2">
             <div class="list-group">
                 <a href="{{route('home')}}" class="list-group-item list-group-item-action @if(Route::is('home')) active @endif" aria-current="true">

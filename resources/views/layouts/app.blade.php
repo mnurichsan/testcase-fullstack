@@ -65,7 +65,7 @@
 
 <main>
 
-<div class="album py-5 mb-5">
+<div class="album pb-5 ">
     @yield('content')
     
 </div>
