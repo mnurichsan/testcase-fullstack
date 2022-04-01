@@ -13,6 +13,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/',[App\Http\Controllers\FrontendController::class,'index'])->name('front');
+
+Auth::routes(['register' => false]);
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::prefix('category')->group(function () {
+        Route::get('',[App\Http\Controllers\CategoryController::class,'index'])->name('category.index');
+        Route::get('create',[App\Http\Controllers\CategoryController::class,'create'])->name('category.create');
+        Route::post('store',[App\Http\Controllers\CategoryController::class,'store'])->name('category.store');
+        Route::get('{id}/edit',[App\Http\Controllers\CategoryController::class,'edit'])->name('category.edit');
+        Route::put('{id}/update',[App\Http\Controllers\CategoryController::class,'update'])->name('category.update');
+        Route::post('delete',[App\Http\Controllers\CategoryController::class,'destroy'])->name('category.destory');
+    });
+
+    Route::prefix('product')->group(function () {
+        
+    });
+    
 });
+
+
