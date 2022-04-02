@@ -1,20 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-6">
+        <h2>Majoo.id</h2>
+        <img src="{{asset('img/bglogin.svg')}}" class="img-fluid" >
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
                 <div class="card-header">
                     <h2 class="card-title text-center">Majoo Login</h2>
                 </div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('login') }}" class="mt-5">
                         @csrf
-
-
-
                         <div class="row mb-3">
                             
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
