@@ -5,7 +5,7 @@
         <a href="{{route('product.index')}}" class="btn btn-success pull-end"><< Back</a>
         <h3 class="card-title mt-3">Add Product</h3>
     </div>
-    <form action="{{route('category.store')}}" method="POST">
+    <form action="{{route('product.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
             <div class="form-group">
@@ -15,29 +15,31 @@
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
-            @enderror
+                @enderror
             </div> 
 
             <div class="form-group">
                 <label>Product Category</label>
                 <select name="category" class="form-control category-select">
-                    <option>--PILIH--</option>
-                    <option>tedst</option>
+                    @foreach ($category as $c)
+                        <option value="{{$c->id}}">{{$c->name}}</option>
+                    @endforeach
                 </select>
                 @error('category')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
-            @enderror
+                @enderror
             </div> 
             <div class="form-group">
                 <label>Image</label>
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
+                <input type="file" accept="image/*" id="image" name="image" class="image @error('image') is-invalid @enderror">
                 @error('image')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
-            @enderror
+                @enderror
+               
             </div> 
             <div class="form-group">
                 <label>Price</label>
@@ -46,8 +48,10 @@
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
-            @enderror
+                @enderror
             </div> 
+
+         
 
             <div class="form-group">
                 <label>Description</label>
@@ -56,10 +60,13 @@
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
-            @enderror
+                @enderror
             </div> 
+
+           
         
         </div>
+       
         <div class="card-footer">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <button type="reset" class="btn btn-danger me-md-1" >Reset</button>
@@ -79,7 +86,49 @@
         .create( document.querySelector( '#description' ) )
         .catch( error => {
         console.error( error );
-} );
+        } );
+
+        FilePond.registerPlugin(
+                FilePondPluginImagePreview,
+            );
+
+            $('.image').filepond({
+                allowMultiple: false,
+              
+            });
+
+            FilePond.setOptions({
+                server: {
+                    process: {
+                        url: "{{route('product.image')}}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    },
+                    revert: {
+                        url: "{{route('productdelete.image')}}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
+                        success:function(data){
+                            console.log(data)
+                        },
+                        error:function(err){
+                            console.log(err)
+                        }
+                    }
+                }
+            });
+            const inputElement = document.querySelector('input[type="image"]');
+            const pond = FilePond.create(inputElement,{
+                // Only accept images
+                acceptedFileTypes: ['image/*'],
+            });
+
+   
+
     });
 </script>
     

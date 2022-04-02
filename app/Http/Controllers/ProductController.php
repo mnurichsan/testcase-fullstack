@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Alert;
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {      
-            $data = Product::all();
+            $data = Product::with('category')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->editColumn('action', function ($data) {
@@ -25,6 +27,18 @@ class ProductController extends Controller
                     </button>';
                     return $actionButton;
                 })
+                ->editColumn('image', function ($data) {
+                    return '<img src="'.asset($data->image).'" class="img-fluid" width="100px">';
+                })
+                ->editColumn('category', function ($data) {
+                    return $data->category ? '<span class="badge bg-success">'.$data->category->name.'</span>' : '<span class="badge bg-danger">Category telah dihapus</span>';
+                })
+                ->editColumn('price', function ($data) {
+                   return rupiahFormat($data->price);
+                })
+                ->editColumn('description', function ($data) {
+                    return Str::limit($data->description, 50);
+                })
                 ->escapeColumns([])
                 ->make(true);
         }
@@ -34,17 +48,28 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('product.create');
+        $category = Category::all();
+        return view('product.create',compact('category'));
     }
 
     public function store(Request $request)
     {
+        
         $this->validate($request,[
-            'name' => 'required'
+            'name' => 'required|unique:products',
+            'category' => 'required',
+            'price' => 'required',
+            'description' => 'required',
+            'image'  => 'required|max:2046'
         ]);
 
+
         $data = [
-            'name' => $request->name
+            'name' => $request->name,
+            'category_id' => $request->category,
+            'price' => $request->price,
+            'description' => $request->description,
+            'image' => $request->image
         ];
 
         Product::create($data);
@@ -55,22 +80,42 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
+        $category = Category::all();
 
-        return view('product.edit',compact('product'));
+        return view('product.edit',compact('product','category'));
     }
 
 
     public function update(Request $request,$id)
     {
+        
         $this->validate($request,[
-            'name' => 'required'
+            'name' => 'required',
+            'category' => 'required',
+            'price' => 'required',
+            'description' => 'required',
         ]);
 
-        $data = [
-            'name' => $request->name
-        ];
 
-        Product::findOrFail($id)->update($data);
+        $data = [
+            'name' => $request->name,
+            'category_id' => $request->category,
+            'price' => $request->price,
+            'description' => $request->description
+        ];
+      
+        $product = Product::findOrFail($id);
+
+        if($request->has('image')){
+            if($product->image){
+                unlink($product->image);
+            }
+    
+            $data['image'] = $request->image;
+
+        }
+
+        $product->update($data);
         Alert::success('success','Update Data Product Successfully');
         return redirect()->route('product.index');
     }
@@ -80,12 +125,29 @@ class ProductController extends Controller
     {
         $id = $request->id;
 
-        $data = Product::findOrFail($id)->delete();
+        $data = Product::findOrFail($id);
+        if($data->image){
+            unlink($data->image);
+        }
+        $data->delete();
         
         if ($data) {
             return response()->json(['message' => 'Delete Product Successfully'], 200);
         } else {
             return response()->json(['message' => 'Error'], 200);
         }
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $upload = uploads($request->image,'product');
+        return $upload['image'];
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $file = $request->getContent();
+        unlink($file);
+        return response()->json(['message' => "Success"]);
     }
 }
