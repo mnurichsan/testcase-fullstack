@@ -22,7 +22,7 @@
         <div class="card">
             <div class="card-body">
               <h5 class="card-title">Product</h5>
-              <h6 class="card-subtitle mb-2 text-muted">2</h6>
+              <h6 class="card-subtitle mb-2 text-muted">{{$productCount}}</h6>
               <a href="{{route('product.index')}}" class="card-link">See All</a>
             </div>
           </div>
@@ -31,7 +31,7 @@
         <div class="card">
             <div class="card-body">
               <h5 class="card-title">Category</h5>
-              <h6 class="card-subtitle mb-2 text-muted">2</h6>
+              <h6 class="card-subtitle mb-2 text-muted">{{$categoryCount}}</h6>
               <a href="{{route('category.index')}}" class="card-link">See All</a>
             </div>
           </div>

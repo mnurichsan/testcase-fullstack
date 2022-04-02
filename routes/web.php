@@ -37,6 +37,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('{id}/edit',[App\Http\Controllers\ProductController::class,'edit'])->name('product.edit');
         Route::put('{id}/update',[App\Http\Controllers\ProductController::class,'update'])->name('product.update');
         Route::post('delete',[App\Http\Controllers\ProductController::class,'destroy'])->name('product.destory');
+        
+        //imageUpload
+        Route::post('/create/image', [App\Http\Controllers\ProductController::class, 'uploadImage'])->name('product.image');
+        Route::post('/delete/image', [App\Http\Controllers\ProductController::class, 'deleteImage'])->name('productdelete.image');
     });
     
 });

@@ -68,14 +68,9 @@ class ProductController extends Controller
             'name' => $request->name,
             'category_id' => $request->category,
             'price' => $request->price,
-            'description' => $request->description
+            'description' => $request->description,
+            'image' => $request->image
         ];
-      
-
-        if($request->has('image')){
-            $upload = uploads($request->image,'product');
-            $data['image'] = $upload['image'];
-        }
 
         Product::create($data);
         Alert::success('success','Insert Data Product Successfully');
@@ -109,13 +104,18 @@ class ProductController extends Controller
             'description' => $request->description
         ];
       
+        $product = Product::findOrFail($id);
 
         if($request->has('image')){
-            $upload = uploads($request->image,'product');
-            $data['image'] = $upload['image'];
+            if($product->image){
+                unlink($product->image);
+            }
+    
+            $data['image'] = $request->image;
+
         }
 
-        Product::findOrFail($id)->update($data);
+        $product->update($data);
         Alert::success('success','Update Data Product Successfully');
         return redirect()->route('product.index');
     }
@@ -125,12 +125,29 @@ class ProductController extends Controller
     {
         $id = $request->id;
 
-        $data = Product::findOrFail($id)->delete();
+        $data = Product::findOrFail($id);
+        if($data->image){
+            unlink($data->image);
+        }
+        $data->delete();
         
         if ($data) {
             return response()->json(['message' => 'Delete Product Successfully'], 200);
         } else {
             return response()->json(['message' => 'Error'], 200);
         }
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $upload = uploads($request->image,'product');
+        return $upload['image'];
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $file = $request->getContent();
+        unlink($file);
+        return response()->json(['message' => "Success"]);
     }
 }

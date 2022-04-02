@@ -22,7 +22,6 @@
             <div class="form-group">
                 <label>Product Category</label>
                 <select name="category" class="form-control category-select">
-                    <option>--PILIH--</option>
                     @foreach ($category as $c)
                         <option value="{{$c->id}}" @if($c->id == $product->category_id) selected @endif>{{$c->name}}</option>
                     @endforeach
@@ -37,17 +36,12 @@
             <div class="form-group">
                 <label>Image</label><br>
                 <img src="{{asset($product->image)}}" class="img-fluid mb-2" width="100px">
-                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
+                <input type="file" accept="image/*" name="image" id="image" class="image @error('image') is-invalid @enderror">
                 @error('image')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
                 @enderror
-                <div class="progress mt-2">
-                    <div class="progress-bar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                    0%
-                </div>
-               
             </div> 
             <div class="form-group">
                 <label>Description</label>
@@ -94,39 +88,44 @@
         console.error( error );
         } );
 
-        // $('form').ajaxForm({
-        //     beforeSend:function(){
-        //         $('#success').empty();
-        //         $('.progress-bar').text('0%');
-        //         $('.progress-bar').css('width', '0%');
-        //     },
-        //     uploadProgress:function(event, position, total, percentComplete){
-        //         $('.progress-bar').text(percentComplete + '0%');
-        //         $('.progress-bar').css('width', percentComplete + '0%');
-        //     },
-        //     success:function(data)
-        //     {
-        //         if(data.success)
-        //         {
-        //             $('.progress-bar').text('Uploaded');
-        //             $('.progress-bar').css('width', '100%');
-        //             $("#form").submit();
-        //         }else{
-        //             Swal.fire({
-        //             title: 'error',
-        //             text: data.message,
-        //             icon: 'error',
-        //         });
-        //         }
-        //     },
-        //     error:function(err,msg){
-        //         Swal.fire({
-        //             title: 'error',
-        //             text: err.responseText,
-        //             icon: 'error',
-        //         });
-        //     }
-        // });
+
+        FilePond.registerPlugin(
+                FilePondPluginImagePreview,
+            );
+
+            $('.image').filepond({
+                allowMultiple: false,
+            });
+
+            FilePond.setOptions({
+                server: {
+                    process: {
+                        url: "{{route('product.image')}}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    },
+                    revert: {
+                        url: "{{route('productdelete.image')}}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
+                        success:function(data){
+                            console.log(data)
+                        },
+                        error:function(err){
+                            console.log(err)
+                        }
+                    }
+                }
+            });
+            const inputElement = document.querySelector('input[type="image"]');
+            const pond = FilePond.create(inputElement,{
+                // Only accept images
+                acceptedFileTypes: ['image/*'],
+            });
     });
 </script>
     
